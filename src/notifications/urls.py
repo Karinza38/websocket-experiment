@@ -17,8 +17,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("notifications.api.urls", namespace="api")),
+    path("counter/", TemplateView.as_view(template_name="counter.html")),
+    path("increment/", TemplateView.as_view(template_name="increment_counter.html")),
 ]
