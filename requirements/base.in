@@ -2,3 +2,5 @@ django
 psycopg
 python-dotenv
 djangorestframework
+channels[daphne]
+channels_redis

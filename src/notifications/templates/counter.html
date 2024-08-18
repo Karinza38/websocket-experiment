@@ -9,10 +9,19 @@
 
     <script>
         fetch(
-        "http://127.0.0.1:8000/api/v1/counter"
-    ).then(response => response.json()).then(json => {
-        document.getElementById("counterValue").innerHTML = json["count"];
-    });
+            "http://localhost:8000/api/v1/counter/"
+        ).then(response => response.json()).then(json => {
+            document.getElementById("counterValue").innerHTML = json["count"];
+        });
+
+        const counterSocket = new WebSocket('ws://localhost:8000/ws/counter/');
+        counterSocket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            document.getElementById("counterValue").innerHTML = data["count"];
+        }
+        counterSocket.onclose = function(event) {
+            console.error('Counter socket closed unexpectedly');
+        };
     </script>
 </body>
 </html>
