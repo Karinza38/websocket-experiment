@@ -1,0 +1,45 @@
+services:
+  db:
+    # NOTE: No persistence storage configured.
+    # See: https://hub.docker.com/_/postgres/
+    image: postgres:16
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=notifications
+      - POSTGRES_PASSWORD=notifications
+    networks:
+      - notifications-dev
+
+  redis:
+    image: redis:6
+    command: ["redis-server", "--appendonly", "yes"]
+    # volumes:
+    #   - data:/data
+    networks:
+      - notifications-dev
+
+  http:
+    build: .
+    command: ["/start.sh"]
+    environment:
+      - DJANGO_SETTINGS_MODULE=notifications.conf.base
+      - SECRET_KEY=${SECRET_KEY:-django-insecure-!bkx+tx18&lvp(@_9)9ut(y(keqho*zhz1&^sqqgq9*i=__w(}
+      - DB_NAME=notifications
+      - DB_USER=notifications
+      - DB_HOST=db
+      - REDIS_HOST=redis
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+      - redis
+    networks:
+      - notifications-dev
+
+  # interface:
+  #   build: ./docker/interface-server
+
+networks:
+  notifications-dev:
+    name: notifications-dev
+
