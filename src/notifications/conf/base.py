@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # 3rd party libraries
     "solo",
     "rest_framework",
+    "channels",  # For runworker management command
     # local packages
     "notifications.counter",
 ]
@@ -138,13 +139,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #
 # Channels
 #
-
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 ASGI_APPLICATION = "notifications.asgi.application"
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [(REDIS_HOST, 6379)],
         },
     },
 }
