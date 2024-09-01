@@ -7,14 +7,15 @@
 <body>
     <p id="counterValue"></p>
 
-    <script>
+    <script data-apibaseurl="{{ api_base_url }}" data-wsbaseurl="{{ ws_base_url }}">
+        const data = document.currentScript.dataset;
         fetch(
-            "http://localhost:8000/api/v1/counter/"
+            `${data.apibaseurl}/api/v1/counter/`
         ).then(response => response.json()).then(json => {
             document.getElementById("counterValue").innerHTML = json["count"];
         });
 
-        const counterSocket = new WebSocket('ws://localhost:8000/ws/counter/');
+        const counterSocket = new WebSocket(`${data.wsbaseurl}/ws/counter/`);
         counterSocket.onmessage = function(event) {
             const data = JSON.parse(event.data);
             document.getElementById("counterValue").innerHTML = data["count"];

@@ -134,6 +134,10 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Custom settings
+API_BASE_URL = os.getenv("API_BASE_URL", default="http://127.0.0.1:8000")
+WS_BASE_URL = os.getenv("WS_BASE_URL", default="ws://127.0.0.1:8000")
+
 # 3rd party app settings
 
 #
