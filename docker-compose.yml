@@ -13,17 +13,17 @@ services:
   redis:
     image: redis:6
     command: ["redis-server", "--appendonly", "yes"]
-    # volumes:
-    #   - data:/data
     networks:
       - notifications-dev
 
-  http:
+  web:
     build: .
-    command: ["/start.sh"]
+    command: ["/start_http_server.sh"]
     environment:
       - DJANGO_SETTINGS_MODULE=notifications.conf.base
       - SECRET_KEY=${SECRET_KEY:-django-insecure-!bkx+tx18&lvp(@_9)9ut(y(keqho*zhz1&^sqqgq9*i=__w(}
+      - API_BASE_URL=http://localhost:8000
+      - WS_BASE_URL=ws://localhost:8001
       - DB_NAME=notifications
       - DB_USER=notifications
       - DB_HOST=db
@@ -33,11 +33,29 @@ services:
     depends_on:
       - db
       - redis
+      - websocket
     networks:
       - notifications-dev
 
-  # interface:
-  #   build: ./docker/interface-server
+  websocket:
+    build: .
+    command: ["/start_ws_server.sh"]
+    environment:
+      - DJANGO_SETTINGS_MODULE=notifications.conf.base
+      - SECRET_KEY=${SECRET_KEY:-django-insecure-!bkx+tx18&lvp(@_9)9ut(y(keqho*zhz1&^sqqgq9*i=__w(}
+      - API_BASE_URL=http://localhost:8000
+      - WS_BASE_URL=ws://localhost:8001
+      - DB_NAME=notifications
+      - DB_USER=notifications
+      - DB_HOST=db
+      - REDIS_HOST=redis
+    ports:
+      - 8001:8001
+    depends_on:
+      - db
+      - redis
+    networks:
+      - notifications-dev
 
 networks:
   notifications-dev:

@@ -27,10 +27,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-COPY ./bin/start_http_server.sh /start.sh
+COPY ./bin/start_http_server.sh /start_http_server.sh
+COPY ./bin/start_ws_server.sh /start_ws_server.sh
 
 COPY --from=base-build /usr/local/lib/python3.12 /usr/local/lib/python3.12
 COPY --from=base-build /usr/local/bin/uwsgi /usr/local/bin/uwsgi
+COPY --from=base-build /usr/local/bin/daphne /usr/local/bin/daphne
 COPY ./src /app/src
 
 RUN useradd -M -u 1000 notifications && chown -R notifications:notifications /app
@@ -39,3 +41,4 @@ RUN useradd -M -u 1000 notifications && chown -R notifications:notifications /ap
 USER notifications
 
 EXPOSE 8000
+EXPOSE 8001
